@@ -1,8 +1,8 @@
-const form = document.getElementById('form');
-const firstName = document.getElementById('firstname');
-const lastName = document.getElementById('lastname');
-const email = document.getElementById('email');
-const identification = document.getElementById('id');
+const form = document.querySelector('#form');
+const firstName = document.querySelector('#firstname');
+const lastName = document.querySelector('#lastname');
+const email = document.querySelector('#email');
+const identification = document.querySelector('#id');
 
 
 form.addEventListener ('submit', (e) => {
@@ -12,7 +12,7 @@ form.addEventListener ('submit', (e) => {
 });
 
 
-document.getElementById('id').placeholder = create_UUID();
+document.getElementById('id').value = create_UUID();
 
 function checkInputs() {
 
@@ -41,7 +41,6 @@ function checkInputs() {
         setSuccessFor(email);
     }
 
-    insert();
     
 }
 
