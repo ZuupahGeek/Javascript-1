@@ -19,18 +19,20 @@ function checkInputs() {
     const firstNameValue = firstName.value.trim();
     const lastNameValue = lastName.value.trim();
     const emailValue = email.value.trim();
-    const idValue = create_UUID;
+    const idValue = create_UUID();
 
     if(firstNameValue === '') {
         setErrorFor(firstName, 'First name cannot be blank');
     } else {
         setSuccessFor(firstName);
+        addFirstName(firstName);
     }
 
     if(lastNameValue === '') {
         setErrorFor(lastName, 'Last name cannot be blank');
     } else {
         setSuccessFor(lastName);
+        addLastName(lastName);
     }
 
     if(emailValue === '') {
@@ -39,6 +41,7 @@ function checkInputs() {
         setErrorFor(email, 'Must enter a valid Email');
     } else {
         setSuccessFor(email);
+        addemail(email);
     }
 
     
@@ -75,14 +78,34 @@ function create_UUID(){
     return uuid;
 }
 
-function insert () {
-    user.push(firstNameValue, lastNameValue, emailValue, idValue)
+var firstNameArray = [];
+var lastNameArray = [];
+var emailArray = [];
+var idArray = [];
+
+
+
+
+function addFirstName () {
+    firstNameArray.push(firstName.value)
+}
+function addLastName () {
+    lastNameArray.push(lastName.value)
+}
+function addemail () {
+    emailArray.push(email.value)
+}
+function addID () {
+    idArray.push(idValue)
+
 }
 
-const clearAndShow = () => {
 
-}
 
-const user = [firstName, lastName, email, identification]
 
-console.log(user[0])
+
+
+console.log(firstNameArray[0])
+console.log(lastNameArray[0])
+console.log(emailArray[0])
+console.log(idArray[0])
