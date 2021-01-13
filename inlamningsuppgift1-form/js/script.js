@@ -1,3 +1,6 @@
+var userArray = [];
+
+
 const form = document.querySelector('#form');
 const firstName = document.querySelector('#firstname');
 const lastName = document.querySelector('#lastname');
@@ -14,6 +17,11 @@ form.addEventListener ('submit', (e) => {
 
 document.getElementById('id').value = create_UUID();
 
+/* const firstNameValue = firstName.value.trim();
+const lastNameValue = lastName.value.trim();
+const emailValue = email.value.trim();
+const idValue = create_UUID(); */
+
 function checkInputs() {
 
     const firstNameValue = firstName.value.trim();
@@ -25,14 +33,13 @@ function checkInputs() {
         setErrorFor(firstName, 'First name cannot be blank');
     } else {
         setSuccessFor(firstName);
-        addFirstName(firstName);
+        console.log(firstNameValue)
     }
 
     if(lastNameValue === '') {
         setErrorFor(lastName, 'Last name cannot be blank');
     } else {
         setSuccessFor(lastName);
-        addLastName(lastName);
     }
 
     if(emailValue === '') {
@@ -41,10 +48,13 @@ function checkInputs() {
         setErrorFor(email, 'Must enter a valid Email');
     } else {
         setSuccessFor(email);
-        addemail(email);
     }
 
-    
+    if(firstNameValue !== '' && lastNameValue !== '' && emailValue !== '' && validateEmail(emailValue)) {
+        console.log(idValue)
+        users();
+        // location.reload();
+    }
 }
 
 
@@ -61,6 +71,9 @@ function setErrorFor(input, message) {
 function setSuccessFor(input) {
     const formControl = input.parentElement;
     formControl.className = 'form-control success';
+
+   
+   
 }
 
 const validateEmail = (email)  => {
@@ -78,34 +91,12 @@ function create_UUID(){
     return uuid;
 }
 
-var firstNameArray = [];
-var lastNameArray = [];
-var emailArray = [];
-var idArray = [];
 
 
-
-
-function addFirstName () {
-    firstNameArray.push(firstName.value)
-}
-function addLastName () {
-    lastNameArray.push(lastName.value)
-}
-function addemail () {
-    emailArray.push(email.value)
-}
-function addID () {
-    idArray.push(idValue)
+function users() {
+    const firstNameValue = firstName.value.trim();
+    const lastNameValue = lastName.value.trim();
+    const emailValue = email.value.trim();
+    const idValue = create_UUID();
 
 }
-
-
-
-
-
-
-console.log(firstNameArray[0])
-console.log(lastNameArray[0])
-console.log(emailArray[0])
-console.log(idArray[0])
