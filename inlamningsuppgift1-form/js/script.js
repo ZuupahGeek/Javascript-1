@@ -1,85 +1,104 @@
-var userArray = [];
-
-
 const form = document.querySelector('#form');
 const firstName = document.querySelector('#firstname');
 const lastName = document.querySelector('#lastname');
 const email = document.querySelector('#email');
-const identification = document.querySelector('#id');
+const idNumber = create_UUID();
+const output = document.querySelector('#users')
+
+let users = [];
 
 
-form.addEventListener ('submit', (e) => {
-    e.preventDefault();
-
-    checkInputs();
-});
 
 
-document.getElementById('id').value = create_UUID();
 
-/* const firstNameValue = firstName.value.trim();
-const lastNameValue = lastName.value.trim();
-const emailValue = email.value.trim();
-const idValue = create_UUID(); */
+
+
+const validateEmail = (email)  => {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email.toLowerCase());
+}
+
 
 function checkInputs() {
 
-    const firstNameValue = firstName.value.trim();
-    const lastNameValue = lastName.value.trim();
-    const emailValue = email.value.trim();
-    const idValue = create_UUID();
 
-    if(firstNameValue === '') {
+    if(firstName.value === '') {
         setErrorFor(firstName, 'First name cannot be blank');
     } else {
         setSuccessFor(firstName);
-        console.log(firstNameValue)
     }
 
-    if(lastNameValue === '') {
+    if(lastName.value === '') {
         setErrorFor(lastName, 'Last name cannot be blank');
     } else {
         setSuccessFor(lastName);
     }
 
-    if(emailValue === '') {
+    if(email.value === '') {
         setErrorFor(email, 'Email cannot be blank');
-    } else if(!validateEmail(emailValue)) {
+    } else if(!validateEmail(email.value)) {
         setErrorFor(email, 'Must enter a valid Email');
     } else {
         setSuccessFor(email);
-    }
-
-    if(firstNameValue !== '' && lastNameValue !== '' && emailValue !== '' && validateEmail(emailValue)) {
-        console.log(idValue)
-        users();
-        // location.reload();
-    }
+    }   
 }
+
+// const validateInput = () => {
+   
+
+// }
 
 
 function setErrorFor(input, message) {
 
     const formControl = input.parentElement;
     const small = formControl.querySelector('small');
-
     small.innerText = message;
-
     formControl.className = 'form-control error';
 }
 
 function setSuccessFor(input) {
     const formControl = input.parentElement;
     formControl.className = 'form-control success';
-
-   
-   
 }
 
-const validateEmail = (email)  => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email.toLowerCase());
+const renderUser = () => {
+
+    output.innerHTML = '';
+    users.forEach(user => {
+
+        let html = `
+        <div class="container">
+            <div class="users">
+                <div class="user-text">
+                    <h4>${user.firstName} ${user.lastName}</h4>
+                    <p>${user.email}</p>
+                </div>
+                <div class="user-buttons">
+                    <button class="btn btn-remove">Remove</button>
+                    <button class="btn btn-edit">Edit</button>
+                </div>
+            </div>
+        `
+        output.innerHTML += html
+    })
+
 }
+
+const createUser = (firstName, lastName, email,) => {
+    let user = {
+        idNumber: create_UUID(),
+        firstName,
+        lastName,
+        email
+    }
+    
+    users.push(user);
+    console.log(users)
+}
+
+
+// Genererar ID-nummer
 
 function create_UUID(){
     var dt = new Date().getTime();
@@ -93,10 +112,19 @@ function create_UUID(){
 
 
 
-function users() {
-    const firstNameValue = firstName.value.trim();
-    const lastNameValue = lastName.value.trim();
-    const emailValue = email.value.trim();
-    const idValue = create_UUID();
+ 
+form.addEventListener ('submit', (e) => {
+    e.preventDefault();
 
-}
+    checkInputs();
+    // validateInput();
+
+    if(firstName.value !== '' && lastName.value !== '' && email.value !== '' && validateEmail(email.value)) {
+        console.log(idNumber)
+        createUser(firstName.value, lastName.value, email.value);
+        renderUser();
+    }
+});
+
+
+
