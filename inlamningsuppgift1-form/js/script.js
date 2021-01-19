@@ -2,9 +2,12 @@ const form = document.querySelector('#form');
 const firstName = document.querySelector('#firstname');
 const lastName = document.querySelector('#lastname');
 const email = document.querySelector('#email');
-const idNumber = create_UUID();
+const idNumber = document.querySelector('#id');
 const output = document.querySelector('#users')
+const outputButton = document.querySelector('#user-buttons')
+const btnRemove = document.querySelector(".btn-remove")
 
+idNumber.value = create_UUID();
 let users = [];
 
 
@@ -43,12 +46,6 @@ function checkInputs() {
     }   
 }
 
-// const validateInput = () => {
-   
-
-// }
-
-
 function setErrorFor(input, message) {
 
     const formControl = input.parentElement;
@@ -64,20 +61,20 @@ function setSuccessFor(input) {
 
 const renderUser = () => {
 
-    output.innerHTML = '';
+    output.innerHTML = '',
     users.forEach(user => {
 
         let html = `
-        <div class="container">
-            <div class="users">
+        <div class="container users">
                 <div class="user-text">
                     <h4>${user.firstName} ${user.lastName}</h4>
                     <p>${user.email}</p>
                 </div>
-                <div class="user-buttons">
+                <div id="${user.idNumber}" class="user-buttons">
                     <button class="btn btn-remove">Remove</button>
-                    <button class="btn btn-edit">Edit</button>
-                </div>
+                    <div class="edit-button">
+                        <button class="btn btn-edit">Edit</button>  
+                    </div> 
             </div>
         `
         output.innerHTML += html
@@ -117,14 +114,38 @@ form.addEventListener ('submit', (e) => {
     e.preventDefault();
 
     checkInputs();
-    // validateInput();
 
     if(firstName.value !== '' && lastName.value !== '' && email.value !== '' && validateEmail(email.value)) {
-        console.log(idNumber)
         createUser(firstName.value, lastName.value, email.value);
         renderUser();
+        form.reset();
     }
+});
+
+output.addEventListener ('click', (e) => {
+    e.preventDefault();
+    // console.log("hejhej!")
+    users = users.filter(user => (user.idNumber) !== e.target.parentNode.id)
+    renderUser();
+    console.log(users)
+   
+});
+
+output.addEventListener ('click', (e) => {
+    e.preventDefault();
+   
+    users = users.find(user => (user.idNumber) !== e.target.parentNode.parentNode.id)
+    return user.idNumber
+    console.log(user.idNumber)
+    
+    
+   
 });
 
 
 
+
+
+
+
+renderUser();
