@@ -1,7 +1,7 @@
 const form = document.querySelector('#todo-form');
 const input = document.querySelector('#todo-input');
 const output = document.querySelector('#output');
-
+let error = document.querySelector('.error-message');
 let todos = [];
 
 const fetchTodos = () => {
@@ -30,7 +30,9 @@ const newTodo = (todo) => {
     let button = document.createElement('button');
     button.classList.add('btn', 'btn-danger');
     button.innerText = 'X';
-    button.addEventListener('click', () => console.log(todo.id));
+    button.addEventListener('click', (e) => {
+        removeTodo();
+    });
 
     innerCard.appendChild(title);
     innerCard.appendChild(button);
@@ -70,23 +72,36 @@ const createTodo = (title) => {
 
 const validateTodo = () => {
     
-    if (input.value == '') {
+    if(input.value === '') {
 
         input.classList.add('is-invalid');
-        let error = document.createElement('small');
-        // error.classList.add('');
-        error.innerText = 'Cannot be blank';
-        input.parentNode.appendChild(error, input.nextSibling)
+        error.innerText = ('Cannot be blank');
+       
     } else {
-        input.classList.remove('is-invalid')
+        input.classList.remove('is-invalid');
+        error.innerText = ('');
         createTodo(input.value);
+        console.log('hejhej');
+       
     }
 }
 
+const removeTodo = async () => {
+    console.log('Bortaaa');
+    let todoTitle = document.querySelector('.title');
+    const url = 'https://jsonplaceholder.typicode.com/todos';
+    const res = await fetch(url);
+    const data = await res.json();
+        data.filter(data => (data.title) !== todoTitle);
+        listTodos();
+    
+}
+
+
 form.addEventListener('submit', e => {
     e.preventDefault();
-    form.reset();
-    validateTodo();
    
-    input.value = '';
+    validateTodo();
+    form.reset();
+    
   })
