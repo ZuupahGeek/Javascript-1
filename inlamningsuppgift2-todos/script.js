@@ -5,7 +5,7 @@ let error = document.querySelector('.error-message');
 let todos = [];
 
 const fetchTodos = () => {
-    fetch('https://jsonplaceholder.typicode.com/todos')
+    fetch('https://jsonplaceholder.typicode.com/todos?_limit=10')
     .then(res => res.json())
     .then(data => {
         todos = data;
@@ -18,7 +18,8 @@ fetchTodos();
 const newTodo = (todo) => {
 
     let card = document.createElement('div');
-    card.classList.add('card', 'p-3', 'my-3', 'todo');
+    card.classList.add('card', 'p-2', 'my-3', 'todo');
+    card.setAttribute('id', `${todo.title}`)
 
     let innerCard = document.createElement('div');
     innerCard.classList.add('d-flex', 'justify-content-between', 'align-items-center');
@@ -26,13 +27,29 @@ const newTodo = (todo) => {
     let title = document.createElement('h4');
     title.classList.add('title');
     title.innerText = todo.title;
+    title.addEventListener('click', (e) => {
+
+        if (todo.completed == false){
+        todo.completed = true;
+        card.classList.add('todo-completed')
+        } else {
+            todo.completed = false;
+            card.classList.remove('todo-completed')
+        }
+    })
 
     let button = document.createElement('button');
     button.classList.add('btn', 'btn-danger');
     button.innerText = 'X';
     button.addEventListener('click', (e) => {
-        removeTodo();
-    });
+
+            if (todo.completed == true) {
+        todos = todos.filter(todo => (todo.title) !== e.target.parentNode.parentNode.id);
+        listTodos();
+        console.log(todos) 
+        }
+       
+    })
 
     innerCard.appendChild(title);
     innerCard.appendChild(button);
@@ -52,14 +69,14 @@ const listTodos = () => {
 
 const createTodo = (title) => {
 
-    fetch('https://jsonplaceholder.typicode.com/todos',{
+    fetch('https://jsonplaceholder.typicode.com/todos/',{
         method: 'POST',
         headers: {
             'Content-type': 'application/json; charset=UTF-8'
         },
         body: JSON.stringify({
             title,
-            completed: false
+            completed: false,
         })
     })
     .then(res => res.json())
@@ -67,7 +84,7 @@ const createTodo = (title) => {
         console.log(data)
         todos.unshift(data);
         listTodos();
-    })
+    });
 }
 
 const validateTodo = () => {
@@ -81,27 +98,15 @@ const validateTodo = () => {
         input.classList.remove('is-invalid');
         error.innerText = ('');
         createTodo(input.value);
-        console.log('hejhej');
        
     }
 }
-
-const removeTodo = async () => {
-    console.log('Bortaaa');
-    let todoTitle = document.querySelector('.title');
-    const url = 'https://jsonplaceholder.typicode.com/todos';
-    const res = await fetch(url);
-    const data = await res.json();
-        data.filter(data => (data.title) !== todoTitle);
-        listTodos();
-    
-}
-
 
 form.addEventListener('submit', e => {
     e.preventDefault();
    
     validateTodo();
     form.reset();
+    console.log(todos)
     
-  })
+  });
