@@ -4,26 +4,24 @@ const lastName = document.querySelector('#lastname');
 const email = document.querySelector('#email');
 const idNumber = document.querySelector('#id');
 const output = document.querySelector('#users')
-const outputButton = document.querySelector('#user-buttons')
-
-
-idNumber.value = create_UUID();
+let formControl = document.querySelector('.form-control')
+idNumber.value = create_UUID();  // sätter ett fast värde på "id" i formuläret. Denna är osynlig, och resettar med resten av formuläret
 let users = [];
 
+let change = false  // Värde som behövs för att redigera användare
+let userId
+let matchingEmail = false
 
 
-
-
-
-
-const validateEmail = (email)  => {
+const validateEmail = (email)  => {  // Validerar Emailen
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email.toLowerCase());
 }
 
 
-function checkInputs() {
+function checkInputs() {  // validerar värdena, och ger felmeddelanden om 
 
+    
 
     if(firstName.value === '') {
         setErrorFor(firstName, 'First name cannot be blank');
@@ -41,6 +39,8 @@ function checkInputs() {
         setErrorFor(email, 'Email cannot be blank');
     } else if(!validateEmail(email.value)) {
         setErrorFor(email, 'Must enter a valid Email');
+    } else if(matchingEmail == true) {
+        setErrorFor(email, 'Email is already registered');
     } else {
         setSuccessFor(email);
     }   
@@ -51,13 +51,16 @@ function setErrorFor(input, message) {
     const formControl = input.parentElement;
     const small = formControl.querySelector('small');
     small.innerText = message;
-    formControl.className = 'form-control error';
+    formControl.classList.remove('success');
+    formControl.classList.add('error') 
 }
 
 function setSuccessFor(input) {
     const formControl = input.parentElement;
-    formControl.className = 'form-control success';
+    formControl.classList.remove('error');
+    formControl.classList.add('success');
 }
+
 
 
 const createUser = (firstName, lastName, email,) => {
@@ -66,14 +69,12 @@ const createUser = (firstName, lastName, email,) => {
         firstName,
         lastName,
         email
-    };
-    
+    }; 
     users.push(user);
-    console.log(users);
 }
 
 
-const renderUser = () => {
+const renderUser = () => {  //Lägger till en div med värdena jag får in i varje user
 
     
     output.innerHTML = '',
@@ -99,20 +100,22 @@ const renderUser = () => {
         btnRemove.classList.add('btn', 'btn-remove');
         btnRemove.innerText = 'Remove';
         btnRemove.addEventListener('click', e => {
-            console.log('ta bort, lol');
             users = users.filter(user => (user.idNumber) !== e.target.parentNode.id);
             renderUser();
+
         });
 
         let btnEdit = document.createElement('button');
         btnEdit.classList.add('btn', 'btn-edit');
         btnEdit.innerText = 'Edit';
         btnEdit.addEventListener('click', e => {
-            console.log('ändra användare, lol');
-            form.removeEventListener('submit', addUser);
-            userIndex = users.findIndex((user => user.idNumber === e.target.parentNode.id))
-        
-        editUser();
+            change = true
+            firstName.value = user.firstName
+            email.value = user.email
+            lastName.value = user.lastName
+            userId = e.target.parentNode.id
+
+        editUser(e.target.parentNode.id);
         
         });
 
@@ -125,67 +128,31 @@ const renderUser = () => {
         output.appendChild(userContainer);
 
 
-       /*  let html = `
-        <div class="container users">
-                <div class="user-text">
-                    <h4>${user.firstName} ${user.lastName}</h4>
-                    <p>${user.email}</p>
-                </div>
-                <div id="${user.idNumber}" class="user-buttons">
-                    <button class="btn btn-remove">Remove</button>
-                        <button class="btn btn-edit">Edit</button>
-            </div>
-        `
-       output.innerHTML += html;
-        let btnRemove = document.querySelector(".btn-remove");
-        let btnEdit = document.querySelector(".btn-edit")
-   
-
-   
-
-        btnRemove.addEventListener('click', e => {
-            console.log('ta bort');
-            users = users.filter(user => (user.idNumber) !== e.target.parentNode.id);
-            renderUser();
-        });
-
-        btnEdit.addEventListener('click', e => {
-            console.log('ändra');
-            
-        userIndex = users.findIndex((user => user.idNumber == e.target.parentNode.id))
-        
-        editUser();
-        renderUser();
-        })
-         */
+      
     });
 }
 
-const editUser = () => {
-    console.log(users[userIndex])
-    firstName.value =  users[userIndex].firstName
-    lastName.value =  users[userIndex].lastName
-    email.value =  users[userIndex].email
-    idNumber.value = users[userIndex.idNumber]
-
-   
-
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        console.log('ny submit funkar')
-        users[userIndex].firstName = firstName.value;
-        users[userIndex].email = email.value;
-        users[userIndex].lastName = lastName.value;
-
-        console.log(users[userIndex])
-
-       form.reset();
-        form.addEventListener('submit', addUser);
-    })
-    renderUser();
-    
+const editUser = (id) => {  //tillåter ändring i ett object i users-arrayen
+    return users.map(user =>{
+        if (user.idNumber == id) return {
+            idNumber: user.idNumber,
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+        } 
+        return user
+    })   
 }
 
+const uniqueEmail = () => {  // får sant värde om email.value redan finns i arrayen users
+        users.map(user =>{
+        if (email.value == user.email) {
+            matchingEmail = true
+        } else {
+            matchingEmail = false
+        }        
+    })
+};
 
 
 // Genererar ID-nummer
@@ -200,38 +167,39 @@ function create_UUID(){
     return uuid;
 }
 
+removeSuccessClass = () => {
+   firstName.parentNode.classList.remove('success')
+   lastName.parentNode.classList.remove('success')
+   email.parentNode.classList.remove('success')
+};
 
 
- 
-/* form.addEventListener ('submit', (e) => {
-    e.preventDefault();
-
+var addUser = function () {  // om alla villkor möts, läggs användaren till i arrayan.
+     uniqueEmail();
     checkInputs();
+   
 
-    if(firstName.value !== '' && lastName.value !== '' && email.value !== '' && validateEmail(email.value)) {
-        createUser(firstName.value, lastName.value, email.value);
-        renderUser();
-        form.reset();
-    }
-}); */
-
-var addUser = function (event) {
-    event.preventDefault();
-    checkInputs();
-
-    if(firstName.value !== '' && lastName.value !== '' && email.value !== '' && validateEmail(email.value)) {
+    if(firstName.value !== '' && lastName.value !== '' && email.value !== '' && validateEmail(email.value) && matchingEmail == false) {
+        removeSuccessClass();
         createUser(firstName.value, lastName.value, email.value);
         renderUser();
         form.reset();
     }
 }
 
-form.addEventListener('submit', addUser);
-
-
-
-
-
-
-
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    checkInputs();
+    if (change == true) {       // om Edit-knappen har tryckts, så uppdateras användaren
+        users = editUser(userId);
+        change = false;
+       
+        renderUser();
+        form.reset();
+        removeSuccessClass();
+        return
+    } else {                    // om Edit-knappen eh tryckts på, så submitar formuläret som vanligt       
+        addUser();
+    }    
+});
 renderUser();
